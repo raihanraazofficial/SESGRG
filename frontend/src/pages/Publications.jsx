@@ -5,7 +5,16 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Badge } from "../components/ui/badge";
-import { publications } from "../mock/data";
+import { useState, useEffect } from 'react';
+
+const [publications, setPublications] = useState([]);
+
+useEffect(() => {
+  fetch(process.env.REACT_APP_PUBLICATIONS_API)
+    .then(response => response.json())
+    .then(data => setPublications(data))
+    .catch(error => console.error('Error:', error));
+}, []);
 
 const Publications = () => {
   const [searchTerm, setSearchTerm] = useState("");
