@@ -117,7 +117,7 @@ const Publications = () => {
           </div>
           <div className="bg-white rounded-lg p-4 text-center shadow-sm">
             <p className="text-2xl font-bold text-blue-600">
-              {publications.reduce((sum, pub) => sum + (Number(pub.citationCount) || 0), 0)}
+              {publications.reduce((sum, pub) => sum + (Number(pub.citationcount) || 0), 0)}
             </p>
             <p className="text-sm text-gray-600">Total Citations</p>
           </div>
