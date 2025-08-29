@@ -1,36 +1,34 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Search, Filter, FileText, ExternalLink, Calendar, Users } from "lucide-react";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Badge } from "../components/ui/badge";
-import { useState, useEffect } from 'react';
-
-const [publications, setPublications] = useState([]);
-
-useEffect(() => {
-  fetch(process.env.REACT_APP_PUBLICATIONS_API)
-    .then(response => response.json())
-    .then(data => setPublications(data))
-    .catch(error => console.error('Error:', error));
-}, []);
 
 const Publications = () => {
+  const [publications, setPublications] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("year");
 
   const categories = ["all", "Machine Learning", "Renewable Energy", "Cybersecurity", "Sustainability"];
 
+  useEffect(() => {
+    fetch(process.env.REACT_APP_PUBLICATIONS_API)
+      .then((response) => response.json())
+      .then((data) => setPublications(data))
+      .catch((error) => console.error("Error:", error));
+  }, []);
+
   const filteredPublications = useMemo(() => {
     let filtered = publications.filter((pub) => {
-      const matchesSearch = 
+      const matchesSearch =
         pub.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        pub.authors.some(author => author.toLowerCase().includes(searchTerm.toLowerCase()));
-      
+        pub.authors.some((author) => author.toLowerCase().includes(searchTerm.toLowerCase()));
+
       const matchesCategory = selectedCategory === "all" || pub.category === selectedCategory;
-      
+
       return matchesSearch && matchesCategory;
     });
 
@@ -43,7 +41,7 @@ const Publications = () => {
     });
 
     return filtered;
-  }, [searchTerm, selectedCategory, sortBy]);
+  }, [searchTerm, selectedCategory, sortBy, publications]);
 
   const PublicationCard = ({ publication }) => (
     <Card className="hover:shadow-lg transition-all duration-300 border-0 shadow-md">
@@ -58,16 +56,16 @@ const Publications = () => {
               {publication.year}
             </span>
           </div>
-          
+
           <h3 className="text-xl font-semibold text-gray-900 leading-tight hover:text-emerald-600 transition-colors">
             {publication.title}
           </h3>
-          
+
           <div className="flex items-center text-gray-600 text-sm">
             <Users className="h-4 w-4 mr-2" />
             {publication.authors.join(", ")}
           </div>
-          
+
           <div className="space-y-2 text-sm text-gray-600">
             <p><strong>Journal:</strong> {publication.journal}</p>
             <p>
@@ -79,7 +77,7 @@ const Publications = () => {
               <p><strong>DOI:</strong> {publication.doi}</p>
             )}
           </div>
-          
+
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">
@@ -126,7 +124,9 @@ const Publications = () => {
             <p className="text-sm text-gray-600">Total Citations</p>
           </div>
           <div className="bg-white rounded-lg p-4 text-center shadow-sm">
-            <p className="text-2xl font-bold text-purple-600">2024</p>
+            <p className="text-2xl font-bold text-purple-600">
+              {publications.length > 0 ? Math.max(...publications.map((p) => p.year)) : "-"}
+            </p>
             <p className="text-sm text-gray-600">Latest Year</p>
           </div>
           <div className="bg-white rounded-lg p-4 text-center shadow-sm">
@@ -149,7 +149,7 @@ const Publications = () => {
                 />
               </div>
             </div>
-            
+
             <div className="flex gap-4">
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger className="w-48">
@@ -163,7 +163,7 @@ const Publications = () => {
                   ))}
                 </SelectContent>
               </Select>
-              
+
               <Select value={sortBy} onValueChange={setSortBy}>
                 <SelectTrigger className="w-40">
                   <SelectValue placeholder="Sort by" />
@@ -176,7 +176,7 @@ const Publications = () => {
               </Select>
             </div>
           </div>
-          
+
           <div className="mt-4 flex items-center justify-between">
             <p className="text-sm text-gray-600">
               Showing {filteredPublications.length} of {publications.length} publications
