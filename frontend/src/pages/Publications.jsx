@@ -81,7 +81,7 @@ const Publications = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-600">
-                <strong>Citations:</strong> {publication.citationCount}
+                <strong>Citations:</strong> {Number(publication.citationcount) || 0}
               </span>
             </div>
             <div className="flex space-x-2">
